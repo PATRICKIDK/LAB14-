@@ -15,7 +15,7 @@ LAB14PM conserva esa separación en carpetas dentro de un proyecto web para que 
 - `LAB14PM.sln`: solución de Rider/Visual Studio.
 - `src/LAB14PM.Api`: API .NET 8, documentación Swagger en desarrollo y health check.
 - `database/lab14pm.sql`: esquema, claves foráneas e información de demostración importable desde MySQL Workbench.
-- `.github/workflows/dotnet.yml`: build, publicación del artefacto y disparador de despliegue a Render.
+- `.github/workflows/main.yml`: build, publicación del artefacto y disparador de despliegue a Render.
 - `Dockerfile` y `render.yaml`: configuración de contenedor y servicio Render.
 
 ## Ejecutar localmente
