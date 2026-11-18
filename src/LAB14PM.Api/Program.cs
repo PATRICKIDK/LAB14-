@@ -12,7 +12,7 @@ builder.Configuration.AddJsonFile(
 
 var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("Falta configurar ConnectionStrings:Default.");
-builder.Services.AddSingleton(new TicketRepository(connectionString));
+builder.Services.AddSingleton<ITicketRepository>(new TicketRepository(connectionString));
 builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
