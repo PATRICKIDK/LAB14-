@@ -19,7 +19,7 @@ LAB14PM conserva esa separación en carpetas dentro de un proyecto web para que 
 ## Ejecutar localmente
 
 1. En MySQL Workbench abre `database/lab14pm.sql` y ejecútalo. Crea la base `lab14pm`, tablas `roles`, `users`, `user_roles`, `tickets` y `ticket_responses`, y algunos registros de ejemplo.
-2. Revisa `src/LAB14PM.Api/appsettings.Development.json` y cambia host, puerto, usuario o contraseña para tu instancia local. La cadena de desarrollo inicial usa `root` sin contraseña.
+2. La conexión local se define en `src/LAB14PM.Api/appsettings.Local.json`, un archivo ignorado por Git. Se carga solo en entorno Development. En Render se usa `ConnectionStrings__Default`.
 3. Abre `LAB14PM.sln` en Rider con .NET 8 SDK instalado y ejecuta el proyecto `LAB14PM.Api`.
 4. En desarrollo visita `/swagger`; `/health` devuelve el estado básico del servicio.
 

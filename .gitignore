@@ -6,3 +6,4 @@
 *.suo
 published/
 .env
+**/appsettings.Local.json
