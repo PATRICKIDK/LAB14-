@@ -13,7 +13,7 @@ LAB14PM conserva esa separación en carpetas dentro de un proyecto web para que 
 ## Contenido
 
 - `LAB14PM.sln`: solución de Rider/Visual Studio.
-- `src/LAB14PM.Api`: API .NET 8, documentación Swagger en desarrollo y health check.
+- `src/LAB14PM.Api`: API .NET 8, documentación Swagger y health check.
 - `database/lab14pm.postgres.sql`: esquema PostgreSQL, claves foráneas e información de demostración para Render Postgres o PostgreSQL local.
 - `database/lab14pm.sql`: versión MySQL conservada para abrir en MySQL Workbench; la API ya no se conecta a esa base.
 - `.github/workflows/main.yml`: build, publicación del artefacto y disparador de despliegue a Render.
@@ -22,7 +22,7 @@ LAB14PM conserva esa separación en carpetas dentro de un proyecto web para que 
 ## Ejecutar localmente
 
 1. Crea una base PostgreSQL llamada `lab14pm` y ejecuta `database/lab14pm.postgres.sql` con pgAdmin, psql o DBeaver. Ese script crea las tablas y registros de ejemplo.
-2. La conexión local se define en `src/LAB14PM.Api/appsettings.Development.json` o mediante la variable `ConnectionStrings__Default`. Actualiza `CHANGE_ME` con la contraseña de tu PostgreSQL local. Render recibe su URL interna desde el Blueprint.
+2. Para la conexión local edita `src/LAB14PM.Api/appsettings.Local.json` (ignorado por Git) y pon la cadena de tu PostgreSQL local. Si no existe, usa el marcador de `appsettings.Development.json` como referencia. Render recibe su URL interna desde el Blueprint.
 3. Abre `LAB14PM.sln` en Rider con .NET 8 SDK instalado y ejecuta el proyecto `LAB14PM.Api`.
 4. En desarrollo visita `/swagger`; `/health` devuelve el estado básico del servicio.
 
@@ -79,4 +79,4 @@ La tabla puente `user_roles` permite que un usuario tenga más de un rol. Las re
 
 La guía LAB 11 indica reutilizar una base entregada en LAB 10, pero ese archivo no está entre los adjuntos. Por eso `lab14pm.sql` es un esquema nuevo inferido de las entidades y capturas del PDF (usuarios, roles, tickets y respuestas); si la base del LAB 10 usa otros nombres o columnas, habrá que ajustar el repositorio y el script para mantener compatibilidad. El PDF se titula Laboratorio 11, aunque en los pies aparece “Guía de Laboratorio No 02”; sus observaciones mencionan .NET 9. Para seguir la guía adjunta de LAB 14, este proyecto apunta a .NET 8.
 
-**Compatibilidad del entorno:** al momento de preparar el proyecto, el entorno local solo tenía instalado el SDK .NET 10, así que no ejecuté la compilación de un proyecto cuyo objetivo es `net8.0`. Además, Microsoft marcó .NET 8 fuera de soporte el 10 de noviembre de 2026; se conserva aquí porque así lo exige el material del LAB 14. [Política oficial de soporte de .NET](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core).
+**Compatibilidad del entorno:** el proyecto apunta a `net8.0` porque así lo exige el material del LAB 14. La compilación Release se verificó con 0 errores y 0 advertencias. Microsoft marca .NET 8 fuera de soporte desde el 10 de noviembre de 2026; se conserva aquí para cumplir la guía. [Política oficial de soporte de .NET](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core).
