@@ -1,0 +1,46 @@
+name: Build and Deploy .NET Application
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore LAB14PM.sln
+
+      - name: Build application
+        run: dotnet build LAB14PM.sln --configuration Release --no-restore
+
+      - name: Publish application
+        run: dotnet publish src/LAB14PM.Api/LAB14PM.Api.csproj --configuration Release --no-restore --output ./published
+
+      - name: Upload published files
+        uses: actions/upload-artifact@v4
+        with:
+          name: LAB14PM-published
+          path: published/
+          retention-days: 7
+
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not configured; skipping deployment."
+            exit 0
+          fi
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
