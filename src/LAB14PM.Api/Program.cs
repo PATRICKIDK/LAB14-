@@ -5,8 +5,10 @@ using LAB14PM.Api.Infrastructure.Persistence;
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
-if (builder.Environment.IsDevelopment())
-    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile(
+    Path.Combine(AppContext.BaseDirectory, "appsettings.Local.json"),
+    optional: true,
+    reloadOnChange: true);
 
 var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("Falta configurar ConnectionStrings:Default.");
