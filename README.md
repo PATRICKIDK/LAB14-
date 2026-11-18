@@ -6,7 +6,7 @@ API de gestión de tickets para trabajar el laboratorio en una solución .NET 8.
 
 ## Análisis de la estructura del LAB 11
 
-La guía organiza la solución en cuatro capas. `Domain` concentra entidades y reglas del negocio; `Application` contiene casos de uso, comandos, consultas y handlers CQRS; `Infrastructure` implementa el acceso a MySQL; y `API` expone los endpoints REST y registra los servicios. MediatR enruta comandos de escritura y consultas de lectura hacia sus handlers. El ejemplo documenta un sistema de tickets con usuarios, roles y respuestas, y muestra Swagger para explorar la API.
+La guía organiza la solución en cuatro capas. `Domain` concentra entidades y reglas del negocio; `Application` contiene casos de uso, comandos, consultas y handlers CQRS; `Infrastructure` implementa el acceso a PostgreSQL con Npgsql; y `API` expone los endpoints REST y registra los servicios. MediatR enruta comandos de escritura y consultas de lectura hacia sus handlers. El ejemplo documenta un sistema de tickets con usuarios, roles y respuestas, y muestra Swagger para explorar la API.
 
 LAB14PM conserva esa separación en carpetas dentro de un proyecto web para que la solución sea sencilla de abrir en Rider y publicar como una sola aplicación. Incluye CQRS para listar/consultar tickets, crear tickets, cambiar su estado y registrar respuestas.
 
@@ -14,14 +14,15 @@ LAB14PM conserva esa separación en carpetas dentro de un proyecto web para que 
 
 - `LAB14PM.sln`: solución de Rider/Visual Studio.
 - `src/LAB14PM.Api`: API .NET 8, documentación Swagger en desarrollo y health check.
-- `database/lab14pm.sql`: esquema, claves foráneas e información de demostración importable desde MySQL Workbench.
+- `database/lab14pm.postgres.sql`: esquema PostgreSQL, claves foráneas e información de demostración para Render Postgres o PostgreSQL local.
+- `database/lab14pm.sql`: versión MySQL conservada para abrir en MySQL Workbench; la API ya no se conecta a esa base.
 - `.github/workflows/main.yml`: build, publicación del artefacto y disparador de despliegue a Render.
 - `Dockerfile` y `render.yaml`: configuración de contenedor y servicio Render.
 
 ## Ejecutar localmente
 
-1. En MySQL Workbench abre `database/lab14pm.sql` y ejecútalo. Crea la base `lab14pm`, tablas `roles`, `users`, `user_roles`, `tickets` y `ticket_responses`, y algunos registros de ejemplo.
-2. La conexión local se define en `src/LAB14PM.Api/appsettings.Local.json`, un archivo ignorado por Git. Se carga solo en entorno Development. En Render se usa `ConnectionStrings__Default`.
+1. Crea una base PostgreSQL llamada `lab14pm` y ejecuta `database/lab14pm.postgres.sql` con pgAdmin, psql o DBeaver. Ese script crea las tablas y registros de ejemplo.
+2. La conexión local se define en `src/LAB14PM.Api/appsettings.Development.json` o mediante la variable `ConnectionStrings__Default`. Actualiza `CHANGE_ME` con la contraseña de tu PostgreSQL local. Render recibe su URL interna desde el Blueprint.
 3. Abre `LAB14PM.sln` en Rider con .NET 8 SDK instalado y ejecuta el proyecto `LAB14PM.Api`.
 4. En desarrollo visita `/swagger`; `/health` devuelve el estado básico del servicio.
 
@@ -46,16 +47,17 @@ Desde la carpeta del proyecto ejecuta `dotnet publish src/LAB14PM.Api/LAB14PM.Ap
 ### GitHub Actions y Render
 
 1. Sube el proyecto a un repositorio GitHub en la rama `main`.
-2. En Render crea un servicio Web usando el Blueprint del archivo `render.yaml` y conecta ese repositorio.
-3. En Render configura `ConnectionStrings__Default` con la conexión a un servidor MySQL accesible desde Render. No publiques credenciales dentro del repositorio. Render necesita una base MySQL externa; el esquema SQL se importa en esa instancia antes de iniciar la API.
+2. En Render crea/sincroniza un Blueprint desde el archivo `render.yaml` y conecta ese repositorio. El Blueprint declara la API y una base Render Postgres en la misma región, y conecta la URL interna a `ConnectionStrings__Default`.
+3. En la base PostgreSQL de Render abre Connect/PSQL o conéctate con pgAdmin/DBeaver usando la URL externa y ejecuta `database/lab14pm.postgres.sql` una vez. La URL externa usa TLS; para la API en Render se inyecta automáticamente la URL interna.
 4. Crea un Deploy Hook para el servicio Render y guárdalo en GitHub como secreto `RENDER_DEPLOY_HOOK_URL`.
-5. Cada push a `main` ejecuta restore, build y publish en `.github/workflows/dotnet.yml`; al finalizar, GitHub Actions llama el Deploy Hook para solicitar el despliegue.
-6. Verifica `/health` en la URL entregada por Render. Swagger se habilita solo en entorno Development.
+5. Cada push a `main` ejecuta restore, build y publish en `.github/workflows/main.yml`; si configuras `RENDER_DEPLOY_HOOK_URL`, GitHub Actions llama el Deploy Hook para solicitar el despliegue. También puedes activar auto deploy desde Render.
+6. Verifica `/health` y `/swagger` en la URL entregada por Render.
 
 ## Variables de configuración
 
-- `ConnectionStrings__Default`: cadena de conexión MySQL en Render/GitHub secrets.
-- En local se puede modificar la cadena de `appsettings.Development.json`.
+- `ConnectionStrings__Default`: cadena ADO.NET de Npgsql (`Host=...;Port=5432;Database=...;Username=...;Password=...`) en local. El Blueprint de Render la vincula a la URL interna de Postgres.
+- Render puede usar URL `postgresql://` del Blueprint; la API la normaliza a formato Npgsql automáticamente.
+- En local se puede modificar la cadena de `appsettings.Development.json`; `CHANGE_ME` es solo un marcador.
 
 No se copiaron instrucciones de las guías como datos de la aplicación: LAB 11 y LAB 14 se usaron como requisitos de estructura y despliegue, respectivamente.
 

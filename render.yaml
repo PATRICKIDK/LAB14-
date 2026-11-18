@@ -11,4 +11,12 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__Default
-        sync: false
+        fromDatabase:
+          name: lab14pm-db
+          property: connectionString
+
+databases:
+  - name: lab14pm-db
+    databaseName: lab14pm
+    user: lab14pm_user
+    plan: free
