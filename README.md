@@ -1,5 +1,7 @@
 # LAB14PM
 
+LAB 14 CONEXION GITHUB Y RENDER
+
 API de gestión de tickets para trabajar el laboratorio en una solución .NET 8. La estructura toma como referencia la práctica LAB 11: CQRS con MediatR y carpetas para API, Application, Domain e Infrastructure. La guía LAB 14 se centra en publicar .NET 8, automatizar el flujo con GitHub Actions y desplegar el servicio en Render.
 
 ## Análisis de la estructura del LAB 11
