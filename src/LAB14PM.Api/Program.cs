@@ -24,6 +24,9 @@ app.UseSwaggerUI();
 app.MapGet("/health", () => Results.Ok(new { status = "ok", project = "LAB14PM" }))
    .WithName("HealthCheck");
 
+app.MapGet("/", () => Results.Redirect("/swagger"))
+   .ExcludeFromDescription();
+
 var tickets = app.MapGroup("/api/tickets").WithTags("Tickets");
 tickets.MapGet("/", async (ISender sender, CancellationToken ct) =>
     Results.Ok(await sender.Send(new GetTicketsQuery(), ct)))
